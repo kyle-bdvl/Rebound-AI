@@ -1,13 +1,20 @@
-import { Routes ,Route } from "react-router-dom";
-import { createBrowserRouter } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
+import { SidebarProvider, SidebarTrigger } from "@/shadcn/ui/sidebar";
+import CustomSidebar from "../components/CustomSidebar";
 import Home from '../pages/Home'
 import Shopping from '../pages/Shopping'
 
 export function AppRoutes(){
   return (
-    <Routes>
-      <Route index element={<Home/>}/>
-      <Route path="shopping" element={<Shopping/>}/>
-    </Routes>
+    <SidebarProvider>
+      <CustomSidebar />
+      <main className="w-full p-4">
+        <SidebarTrigger />
+        <Routes>
+          <Route index element={<Home/>}/>
+          <Route path="shopping" element={<Shopping/>}/>
+        </Routes>
+      </main>
+    </SidebarProvider>
   );
 }
