@@ -4,12 +4,16 @@ import CustomSidebar from "../components/CustomSidebar"
 
 import Home from "../pages/Home"
 import Chat from "../pages/Chat"
+import FAQ from "../pages/FAQ"
 
 export function AppRoutes() {
   return (
     <Routes>
       {/* 🔹 HOME — NO SIDEBAR */}
       <Route path="/" element={<Home />} />
+
+      {/* 🔹 FAQ — NO SIDEBAR */}
+      <Route path="/faq" element={<FAQ />} />
 
       {/* 🔹 PAGES WITH SIDEBAR */}
       <Route

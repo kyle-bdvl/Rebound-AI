@@ -29,10 +29,10 @@ export default function Home() {
    */
   const examples = useMemo(
     () => [
-      { label: "Study plan", emoji: "📚", text: "Make me a 7-day study plan for SWE3305" },
-      { label: "Explain simply", emoji: "🧠", text: "Explain this topic like I'm 10" },
-      { label: "Project ideas", emoji: "💡", text: "Give me AI project ideas and modules" },
-      { label: "Writing help", emoji: "✍️", text: "Help me write a report introduction" },
+      { label: "Business plan", emoji: "📈", text: "Create a comprehensive business plan for a new venture" },
+      { label: "Strategy", emoji: "🎯", text: "Develop a marketing strategy for product launch" },
+      { label: "Team management", emoji: "👥", text: "Plan effective team building activities" },
+      { label: "Report writing", emoji: "📝", text: "Help draft a professional quarterly report" },
     ],
     []
   )
@@ -53,9 +53,23 @@ export default function Home() {
 
       {/* 
         Main content wrapper.
-        Centers the card horizontally and vertically.
+        Top bar with FAQ button, then centered card.
       */}
-      <div className="relative z-10 flex min-h-screen w-full items-center justify-center px-4">
+      <div className="relative z-10 flex flex-col min-h-screen w-full px-4">
+
+        {/* Top bar */}
+        <div className="flex justify-start pt-4">
+          <Button
+            onClick={() => navi("/faq")}
+            variant="outline"
+            className="bg-white/10 border-white/15 text-white hover:bg-white/15"
+          >
+            FAQ
+          </Button>
+        </div>
+
+        {/* Centered card */}
+        <div className="flex-1 flex items-center justify-center">
 
         {/* 
           Main glassmorphism card.
@@ -80,7 +94,7 @@ export default function Home() {
                 Rebound AI
               </h1>
               <p className="text-white/75">
-                Your AI assistant for studying, planning, and getting work done.
+                Your AI assistant for business strategy, planning, and productivity.
               </p>
             </div>
 
@@ -89,7 +103,7 @@ export default function Home() {
               <Input
                 value={prompt}
                 onChange={(e) => setPrompt(e.target.value)}
-                placeholder='Try: "Generate a study plan for SWE3305"'
+                placeholder='Try: "Create a business strategy for my company"'
                 className="bg-black/20 border-white/15 text-white placeholder:text-white/40"
               />
 
@@ -129,6 +143,7 @@ export default function Home() {
 
           </CardContent>
         </Card>
+        </div>
       </div>
     </div>
   )
