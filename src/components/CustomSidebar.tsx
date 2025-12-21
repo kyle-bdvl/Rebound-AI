@@ -54,7 +54,7 @@ export default function CustomSidebar() {
             <MessageSquare className="size-4 text-white" />
           </div>
           <div>
-            <h2 className="font-semibold">HarvestHub</h2>
+            <h2 className="font-semibold">ReboundAi</h2>
             <p className="text-xs text-muted-foreground">AI Assistant</p>
           </div>
         </div>
