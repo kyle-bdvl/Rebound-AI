@@ -5,8 +5,8 @@ import { Input } from "@/shadcn/ui/input"
 import { ScrollArea } from "@/shadcn/ui/scroll-area"
 import { Avatar, AvatarFallback } from "@/shadcn/ui/avatar"
 import { useAppSelector, useAppDispatch } from "@/store/hooks"
-import { addMessage, clearInitialPrompt } from "@/store/chat" // Kept your Redux actions
-import { addHistory } from "@/store/history" // Kept your History action
+import { addMessage, clearInitialPrompt } from "@/store/chat" // Kept  Redux actions
+import { addHistory } from "@/store/history" // Kept  History action
 import ReactMarkdown from "react-markdown"
 
 type Message = {
@@ -44,11 +44,11 @@ export default function Chat() {
   const scrollRef = useRef<HTMLDivElement>(null)
   const hasProcessedPrompt = useRef(false)
 
-  // --- GLOBAL THEME LOGIC: This fixes the Sidebar ---
+  // --- GLOBAL THEME LOGIC: for sidebar
   const [isDarkMode, setIsDarkMode] = useState(false)
 
   useEffect(() => {
-    // This targets the very top of your app so the sidebar sees the 'dark' class
+    // This targets the very top of app
     if (isDarkMode) {
       document.documentElement.classList.add("dark")
     } else {
