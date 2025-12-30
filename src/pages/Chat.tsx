@@ -1,11 +1,11 @@
 import { useState, useRef, useEffect } from "react"
-import { Send, User, Bot, Moon, Sun } from "lucide-react" // Added Moon and Sun
+import { Send, User, Bot, Moon, Sun, Paperclip } from "lucide-react"
 import { Button } from "@/shadcn/ui/button"
 import { Input } from "@/shadcn/ui/input"
 import { ScrollArea } from "@/shadcn/ui/scroll-area"
 import { Avatar, AvatarFallback } from "@/shadcn/ui/avatar"
 import { useAppSelector, useAppDispatch } from "@/store/hooks"
-import { clearInitialPrompt } from "@/store/chat"
+import { addMessage, setMessages, resetChat, clearInitialPrompt } from "@/store/chat"
 import ReactMarkdown from "react-markdown"
 
 type Message = {
@@ -30,21 +30,16 @@ Follow these rules:
 
 export default function Chat() {
   const dispatch = useAppDispatch()
+  const messages = useAppSelector((state) => state.chatSlice.messages)
   const initialPrompt = useAppSelector((state) => state.chatSlice.initialPrompt)
 
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      id: "1",
-      role: "assistant",
-      content: "Hello! I'm Rebound AI. How can I help you today?",
-      timestamp: new Date(),
-    },
-  ])
   const [input, setInput] = useState("")
   const [isTyping, setIsTyping] = useState(false)
   
   // --- Theme State ---
   const [isDarkMode, setIsDarkMode] = useState(false)
+  const [selectedFile, setSelectedFile] = useState<File | null>(null)
+  const fileInputRef = useRef<HTMLInputElement | null>(null)
 
   const scrollRef = useRef<HTMLDivElement>(null)
   const hasProcessedPrompt = useRef(false)
@@ -100,7 +95,7 @@ export default function Chat() {
     if (!content) return
 
     const userMessage: Message = { id: Date.now().toString(), role: "user", content, timestamp: new Date() }
-    setMessages((prev) => [...prev, userMessage])
+    dispatch(addMessage(userMessage))
     setInput("")
     setIsTyping(true)
 
@@ -108,9 +103,14 @@ export default function Chat() {
       const historyPlusNewUser = [...messages, userMessage]
       const reply = await callGemini(historyPlusNewUser)
       const aiMessage: Message = { id: (Date.now() + 1).toString(), role: "assistant", content: reply, timestamp: new Date() }
-      setMessages((prev) => [...prev, aiMessage])
+      dispatch(addMessage(aiMessage))
     } catch (err: any) {
-      setMessages((prev) => [...prev, { id: Date.now().toString(), role: "assistant", content: `⚠️ Error: ${err?.message}`, timestamp: new Date() }])
+      dispatch(addMessage({
+        id: Date.now().toString(),
+        role: "assistant",
+        content: `⚠️ Error: ${err?.message}`,
+        timestamp: new Date(),
+      }))
     } finally {
       setIsTyping(false)
     }
@@ -123,8 +123,32 @@ export default function Chat() {
     }
   }
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (file) {
+      setSelectedFile(file)
+    }
+  }
+
+  const handleSendFile = () => {
+    if (!selectedFile) return
+    // For images, you can show a preview; for now, just show the file name
+    dispatch(addMessage({
+      id: Date.now().toString(),
+      role: "user",
+      content: selectedFile.type.startsWith("image/")
+        ? `![${selectedFile.name}](uploaded-image-placeholder)`
+        : `📎 Uploaded file: ${selectedFile.name}`,
+      timestamp: new Date(),
+    }))
+    setSelectedFile(null)
+  }
+
+  const handlePaperclipClick = () => {
+    fileInputRef.current?.click()
+  }
+
   return (
-    // The "dark" class here enables Tailwind's dark mode styles if your project is configured for it
     <div className={`${isDarkMode ? "dark" : ""} flex h-screen flex-col bg-background text-foreground transition-colors duration-300`}>
       
       {/* Chat Header */}
@@ -188,7 +212,23 @@ export default function Chat() {
       {/* Input Area */}
       <div className="border-t bg-card p-4">
         <div className="mx-auto max-w-3xl">
-          <div className="flex gap-2">
+          <div className="flex gap-2 items-center">
+            {/* File Upload Button */}
+            <input
+              type="file"
+              ref={fileInputRef}
+              className="hidden"
+              onChange={handleFileChange}
+              accept="image/*,.pdf,.doc,.docx,.txt"
+            />
+            <Button
+              type="button"
+              variant="outline"
+              size="icon"
+              onClick={handlePaperclipClick}
+            >
+              <Paperclip className="size-4" />
+            </Button>
             <Input
               value={input}
               onChange={(e) => setInput(e.target.value)}
@@ -200,6 +240,29 @@ export default function Chat() {
             <Button onClick={() => handleSendMessage(input)} disabled={!input.trim() || isTyping} size="icon">
               <Send className="size-4" />
             </Button>
+            {/* Show Send File button if a file is selected */}
+            {selectedFile && (
+              <div className="flex items-center gap-2">
+                <span className="text-xs">{selectedFile.name}</span>
+                <Button
+                  type="button"
+                  size="sm"
+                  onClick={handleSendFile}
+                  variant="secondary"
+                >
+                  Send File
+                </Button>
+                <Button
+                  type="button"
+                  size="icon"
+                  variant="ghost"
+                  onClick={() => setSelectedFile(null)}
+                  title="Remove file"
+                >
+                  ×
+                </Button>
+              </div>
+            )}
           </div>
         </div>
       </div>

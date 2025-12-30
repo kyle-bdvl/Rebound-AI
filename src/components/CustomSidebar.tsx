@@ -18,6 +18,8 @@ import { useState } from "react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogClose } from "@/shadcn/ui/dialog"
 import { KeySquare } from "lucide-react"
 import { RadioGroup, RadioGroupItem } from "@/shadcn/ui/radio-group"
+import { useAppDispatch } from "@/store/hooks"
+import { resetChat } from "@/store/chat"
 
 const mainItems = [
   {
@@ -50,11 +52,27 @@ const bottomItems = [
   },
 ]
 
+const accessOptions = [
+  { key: "terminal", label: "Terminal" },
+  { key: "files", label: "Files" },
+  { key: "other", label: "Other Apps" },
+]
+
 export default function CustomSidebar() {
   const navigate = useNavigate()
+  const dispatch = useAppDispatch()
   const location = useLocation()
   const [accessOpen, setAccessOpen] = useState(false)
-  const [accessType, setAccessType] = useState<string | null>(null)
+  const [accessStates, setAccessStates] = useState<{ [key: string]: boolean }>({
+    terminal: false,
+    files: false,
+    other: false,
+  })
+
+  const handleAccess = (key: string, enabled: boolean) => {
+    setAccessStates((prev) => ({ ...prev, [key]: enabled }))
+    // Optionally, handle side effects here
+  }
 
   return (
     <Sidebar>
@@ -93,46 +111,30 @@ export default function CustomSidebar() {
                 Enable or disable access to different parts of your computer.
               </DialogDescription>
             </DialogHeader>
-            <RadioGroup
-              value={accessType ?? ""}
-              onValueChange={setAccessType}
-              className="flex flex-col gap-4 mt-4"
-            >
-              <div className="flex items-center gap-2">
-                <RadioGroupItem value="terminal" id="terminal" />
-                <label htmlFor="terminal" className="cursor-pointer">Terminal</label>
-              </div>
-              <div className="flex items-center gap-2">
-                <RadioGroupItem value="files" id="files" />
-                <label htmlFor="files" className="cursor-pointer">Files</label>
-              </div>
-              <div className="flex items-center gap-2">
-                <RadioGroupItem value="other" id="other" />
-                <label htmlFor="other" className="cursor-pointer">Other Apps</label>
-              </div>
-            </RadioGroup>
-            <div className="flex justify-between mt-4">
-              <Button
-                variant={accessType ? "default" : "outline"}
-                disabled={!accessType}
-                onClick={() => {
-                  // handle enabling access for selected type
-                  setAccessOpen(false)
-                }}
-              >
-                Enable
-              </Button>
-              <Button
-                variant="outline"
-                disabled={!accessType}
-                onClick={() => {
-                  setAccessType(null)
-                  // handle disabling access for selected type
-                  setAccessOpen(false)
-                }}
-              >
-                Disable
-              </Button>
+            <div className="flex flex-col gap-4 mt-4">
+              {accessOptions.map((option) => (
+                <div key={option.key} className="flex items-center justify-between">
+                  <span>{option.label}</span>
+                  <div className="flex gap-2">
+                    <Button
+                      size="sm"
+                      variant={accessStates[option.key] ? "default" : "outline"}
+                      onClick={() => handleAccess(option.key, true)}
+                      disabled={accessStates[option.key]}
+                    >
+                      Enable
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant={!accessStates[option.key] ? "default" : "outline"}
+                      onClick={() => handleAccess(option.key, false)}
+                      disabled={!accessStates[option.key]}
+                    >
+                      Disable
+                    </Button>
+                  </div>
+                </div>
+              ))}
             </div>
             <DialogClose asChild>
               <Button variant="ghost" className="mt-4 w-full">Close</Button>
@@ -143,7 +145,10 @@ export default function CustomSidebar() {
         {/* New Chat Button */}
         <div className="p-2">
           <Button
-            onClick={() => navigate("/chat")}
+            onClick={() => {
+              dispatch(resetChat())
+              navigate("/chat")
+            }}
             className="w-full justify-start gap-2"
             variant="outline"
           >
