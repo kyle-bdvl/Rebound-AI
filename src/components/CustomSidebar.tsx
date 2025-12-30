@@ -1,4 +1,5 @@
 import { Home, MessageSquare, Scale, Settings, HelpCircle, PlusCircle } from "lucide-react"
+import { Server } from "lucide-react"
 import { useNavigate, useLocation } from "react-router-dom"
 import {
   Sidebar,
@@ -33,9 +34,14 @@ const mainItems = [
     icon: MessageSquare,
   },
   {
-    title:"Rules",
-    url:"/rules",
+    title: "Rules",
+    url: "/rules",
     icon: Scale,
+  },
+  {
+    title: "MCP",
+    url: "/mcp",
+    icon: Server,
   }
 ]
 
