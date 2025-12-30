@@ -129,7 +129,7 @@ export default function Home() {
               <Button
                 onClick={handleStartChat}
                 disabled={!prompt.trim()}
-                className="sm:w-[160px] bg-gradient-to-r from-indigo-500 to-pink-500 text-white hover:opacity-90"
+                className="sm:w-[160px] bg-linear-to-r from-indigo-500 to-pink-500 text-white hover:opacity-90"
               >
                 Start Chat →
               </Button>
