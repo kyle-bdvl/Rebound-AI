@@ -19,8 +19,8 @@ import { useState } from "react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogClose } from "@/shadcn/ui/dialog"
 import { KeySquare } from "lucide-react"
 import { RadioGroup, RadioGroupItem } from "@/shadcn/ui/radio-group"
-import { useAppDispatch } from "@/store/hooks"
-import { resetChat } from "@/store/chat"
+import { useAppDispatch, useAppSelector } from "@/store/hooks"
+import { resetChat, setMessages } from "@/store/chat"
 
 const mainItems = [
   {
@@ -68,6 +68,7 @@ export default function CustomSidebar() {
   const navigate = useNavigate()
   const dispatch = useAppDispatch()
   const location = useLocation()
+  const histories = useAppSelector(state => state.historySlice.histories)
   const [accessOpen, setAccessOpen] = useState(false)
   const [accessStates, setAccessStates] = useState<{ [key: string]: boolean }>({
     terminal: false,
@@ -78,6 +79,15 @@ export default function CustomSidebar() {
   const handleAccess = (key: string, enabled: boolean) => {
     setAccessStates((prev) => ({ ...prev, [key]: enabled }))
     // Optionally, handle side effects here
+  }
+
+  // Optional: handle loading a history (stub)
+  const handleHistoryClick = (historyId: string) => {
+    const selectedHistory = histories.find(h => h.id === historyId)
+    if (selectedHistory) {
+      dispatch(setMessages(selectedHistory.messages))
+      navigate("/chat")
+    }
   }
 
   return (
@@ -179,6 +189,31 @@ export default function CustomSidebar() {
                   >
                     <item.icon />
                     <span>{item.title}</span>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        {/* Chat Histories Section */}
+        <SidebarGroup>
+          <SidebarGroupLabel>Chat Histories</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {histories.length === 0 && (
+                <SidebarMenuItem>
+                  <span className="text-xs text-muted-foreground">No chat history yet.</span>
+                </SidebarMenuItem>
+              )}
+              {histories.map(history => (
+                <SidebarMenuItem key={history.id}>
+                  <SidebarMenuButton
+                    onClick={() => handleHistoryClick(history.id)}
+                    isActive={false}
+                    tooltip={history.title}
+                  >
+                    <span className="truncate">{history.title}</span>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
