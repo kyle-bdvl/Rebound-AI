@@ -6,6 +6,7 @@ import Home from "../pages/Home"
 import Chat from "../pages/Chat"
 import FAQ from "../pages/FAQ"
 import Rules from "@/pages/Rules"
+import MCP from "../pages/MCP" // Add this import
 
 export function AppRoutes() {
   return (
@@ -39,6 +40,20 @@ export function AppRoutes() {
             <main className="w-full p-4">
               <SidebarTrigger />
               <Chat />
+            </main>
+          </SidebarProvider>
+        }
+      />
+
+      {/* 🔹 MCP — WITH SIDEBAR */}
+      <Route
+        path="/mcp"
+        element={
+          <SidebarProvider>
+            <CustomSidebar />
+            <main className="w-full p-4">
+              <SidebarTrigger />
+              <MCP />
             </main>
           </SidebarProvider>
         }

@@ -6,6 +6,7 @@ import { ScrollArea } from "@/shadcn/ui/scroll-area"
 import { Avatar, AvatarFallback } from "@/shadcn/ui/avatar"
 import { useAppSelector, useAppDispatch } from "@/store/hooks"
 import { addMessage, setMessages, resetChat, clearInitialPrompt } from "@/store/chat"
+import { addHistory } from "@/store/history"
 import ReactMarkdown from "react-markdown"
 
 type Message = {
@@ -32,6 +33,7 @@ export default function Chat() {
   const dispatch = useAppDispatch()
   const messages = useAppSelector((state) => state.chatSlice.messages)
   const initialPrompt = useAppSelector((state) => state.chatSlice.initialPrompt)
+  const [historySaved, setHistorySaved] = useState(false)
 
   const [input, setInput] = useState("")
   const [isTyping, setIsTyping] = useState(false)
@@ -99,6 +101,17 @@ export default function Chat() {
     setInput("")
     setIsTyping(true)
 
+    // Save new chat history if this is the first user message after a reset
+    if (!historySaved && messages.length === 1 && messages[0].role === "assistant") {
+      dispatch(addHistory({
+        id: Date.now().toString(),
+        title: `Chat on ${new Date().toLocaleString()}`,
+        messages: [messages[0], userMessage],
+        createdAt: new Date().toISOString(),
+      }))
+      setHistorySaved(true)
+    }
+
     try {
       const historyPlusNewUser = [...messages, userMessage]
       const reply = await callGemini(historyPlusNewUser)
@@ -147,6 +160,10 @@ export default function Chat() {
   const handlePaperclipClick = () => {
     fileInputRef.current?.click()
   }
+
+  useEffect(() => {
+    setHistorySaved(false)
+  }, [messages.length === 1 && messages[0].role === "assistant"])
 
   return (
     <div className={`${isDarkMode ? "dark" : ""} flex h-screen flex-col bg-background text-foreground transition-colors duration-300`}>
