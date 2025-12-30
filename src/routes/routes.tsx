@@ -5,7 +5,6 @@ import CustomSidebar from "../components/CustomSidebar"
 import Home from "../pages/Home"
 import Chat from "../pages/Chat"
 import FAQ from "../pages/FAQ"
-import Rules from "@/pages/Rules"
 
 export function AppRoutes() {
   return (
@@ -16,21 +15,7 @@ export function AppRoutes() {
       {/* 🔹 FAQ — NO SIDEBAR */}
       <Route path="/faq" element={<FAQ />} />
 
-      {/* 🔹 RULES — WITH SIDEBAR */}
-      <Route
-        path="/rules"
-        element={
-          <SidebarProvider>
-            <CustomSidebar />
-            <main className="w-full p-4">
-              <SidebarTrigger />
-              <Rules />
-            </main>
-          </SidebarProvider>
-        }
-      />
-
-      {/* 🔹 CHAT — WITH SIDEBAR */}
+      {/* 🔹 PAGES WITH SIDEBAR */}
       <Route
         path="/chat"
         element={

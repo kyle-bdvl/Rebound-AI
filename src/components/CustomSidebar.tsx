@@ -61,7 +61,7 @@ export default function CustomSidebar() {
       {/* Header */}
       <SidebarHeader className="border-b p-4">
         <div className="flex items-center gap-2">
-          <div className="flex size-8 items-center justify-center rounded-lg bg-gradient-to-br from-indigo-500 to-pink-500">
+          <div className="flex size-8 items-center justify-center rounded-lg bg-l-to-br from-indigo-500 to-pink-500">
             <MessageSquare className="size-4 text-white" />
           </div>
           <div>
