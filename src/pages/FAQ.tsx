@@ -25,6 +25,10 @@ export default function FAQ() {
     {
       question: "What kind of tasks can Rebound AI help with?",
       answer: "Rebound AI can assist with business planning, marketing strategies, team management, report writing, and much more. It's tailored for organizational productivity."
+    },
+    {
+      question: "What powers Rebound AI ?",
+      answer: "Rebound AI is powered by Gemma 3, an open source AI that google has given out on hugging face which was then fined tune on our best Datasets."
     }
   ]
 
